@@ -4,6 +4,9 @@ import Victory from '@/assets/victory.svg'
 import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs.jsx"
 import {Input} from "@/components/ui/input.jsx";
 import {Button} from "@/components/ui/button.jsx";
+import {toast} from "sonner";
+import apiClient from "@/lib/api-client.js";
+import {SIGNUP_ROUTE} from "@/utils/constants.js";
 
 const Auth = () => {
 
@@ -11,8 +14,35 @@ const Auth = () => {
     const [password, setPassword] = useState("")
     const [confirmPassword, setConfirmPassword] = useState("")
 
+    const validateSignUp = () => {
+
+        if(!email.length || !password.length || !confirmPassword.length){
+            toast.error("All fields are required");
+            return false;
+        }
+
+        if(password !== confirmPassword){
+            toast.error("Password must match!");
+            return false;
+        }
+
+        return true
+    }
+
     const handleLogin = async () => {}
-    const handleSignUp = async () => {}
+
+    const handleSignUp = async () => {
+        if(validateSignUp()){
+            const response = await apiClient.post(SIGNUP_ROUTE, {
+                email, password
+            });
+
+
+            const data = response.data.user;
+            toast.success("Signed up successfully!");
+
+        }
+    }
 
     return (
         <div className="h-[100vh] w-[100vw] flex items-center justify-center" >
