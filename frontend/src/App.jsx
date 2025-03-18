@@ -21,17 +21,23 @@ const AuthRoute = ({children}) => {
 
 function App() {
 
-    const [userInfo, setUserInfo] = useAppStore(null);
+    const {userInfo, setUserInfo} = useAppStore();
     const [ loading, setLoading ] = useState(true);
 
     useEffect(() => {
         const getUserData = async () => {
-            setLoading(true);
             try{
                 const response = await apiClient.get(GET_USER_INFO);
-
+                if(response.status === 200 && response.data.user.id) {
+                    setUserInfo(response.data.user);
+                } else {
+                    setUserInfo(undefined);
+                }
             } catch(e){
-                console.error({e})
+                console.error(e);
+                setUserInfo(undefined);
+            } finally {
+                setLoading(false);
             }
         };
         if(!userInfo) {
