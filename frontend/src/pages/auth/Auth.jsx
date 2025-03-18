@@ -6,11 +6,15 @@ import {Input} from "@/components/ui/input.jsx";
 import {Button} from "@/components/ui/button.jsx";
 import {toast} from "sonner";
 import apiClient from "@/lib/api-client.js";
-import {SIGNUP_ROUTE} from "@/utils/constants.js";
+import {LOGIN_ROUTE, SIGNUP_ROUTE} from "@/utils/constants.js";
+import {useNavigate} from "react-router-dom";
+import {useAppStore} from "@/store/index.js";
 
 const Auth = () => {
 
+    const navigate = useNavigate();
     const [email, setEmail] = useState("");
+    const { setUserInfo } = useAppStore()
     const [password, setPassword] = useState("")
     const [confirmPassword, setConfirmPassword] = useState("")
 
@@ -25,11 +29,37 @@ const Auth = () => {
             toast.error("Password must match!");
             return false;
         }
-
         return true
     }
 
-    const handleLogin = async () => {}
+    const validateLogin = () => {
+
+        if(!email.length || !password.length ){
+            toast.error("All fields are required");
+            return false;
+        }
+        return true
+    }
+
+    const handleLogin = async () => {
+        if(validateLogin()){
+            const response = await apiClient.post(LOGIN_ROUTE, {
+                email, password
+            });
+
+            if(response.data.user.id){
+                if(response.data.user.profileSetup){
+                    navigate("/chat")
+                } else {
+                    navigate("/profile")
+                }
+                toast.success("Login successfully!");
+                setUserInfo(response.data.user);
+            } else {
+                toast.error("Something went wrong!");
+            }
+        }
+    }
 
     const handleSignUp = async () => {
         if(validateSignUp()){
@@ -37,10 +67,13 @@ const Auth = () => {
                 email, password
             });
 
-
-            const data = response.data.user;
-            toast.success("Signed up successfully!");
-
+            if(response.status === 201){
+                navigate("/profile");
+                toast.success("Signed up successfully!");
+                setUserInfo(response.data.user);
+            } else {
+                toast.error("Something went wrong!");
+            }
         }
     }
 
@@ -56,7 +89,7 @@ const Auth = () => {
                       <p className={"font-medium text-center"} >Fill in the details to get started</p>
                   </div>
                   <div className={"flex items-center justify-center w-full"} >
-                      <Tabs className="w-3/4" >
+                      <Tabs className="w-3/4" defaultValue={"login"} >
                           <TabsList className="bg-transparent rounded-none w-full" >
                               <TabsTrigger
                                   value="login"
