@@ -7,6 +7,8 @@ export const LOGIN_ROUTE = `${AUTH_ROUTES}/login`;
 export const GET_USER_INFO = `${AUTH_ROUTES}/user-info`;
 export const UPDATE_PROFILE_ROUTE = `${AUTH_ROUTES}/update-profile`;
 export const ADD_PROFILE_IMAGE_ROUTE = `${AUTH_ROUTES}/add-profile-image`;
+export const DELETE_PROFILE_IMAGE_ROUTE = `${AUTH_ROUTES}/remove-profile-image`;
+
 
 export const colors = [
     "bg-[#712c4a57] text-[#ff006e] border-[1px] border-[#ff006faa] ",

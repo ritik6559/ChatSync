@@ -3,7 +3,14 @@ import {useAppStore} from "@/store/index.js";
 import {useNavigate} from "react-router-dom";
 import {IoArrowBack} from "react-icons/io5";
 import {Avatar, AvatarImage} from "@/components/ui/avatar.jsx";
-import {ADD_PROFILE_IMAGE_ROUTE, colors, getColor, HOST, UPDATE_PROFILE_ROUTE} from "@/utils/constants.js";
+import {
+    ADD_PROFILE_IMAGE_ROUTE,
+    colors,
+    DELETE_PROFILE_IMAGE_ROUTE,
+    getColor,
+    HOST,
+    UPDATE_PROFILE_ROUTE
+} from "@/utils/constants.js";
 import {FaPlus, FaTrash} from "react-icons/fa";
 import {Input} from "@/components/ui/input.jsx";
 import {Button} from "@/components/ui/button.jsx";
@@ -78,27 +85,46 @@ const Profile = () => {
     }
 
     const handleImageChange = async (event) => {
-        const file = event.target.files[0];
+        try{
+            const file = event.target.files[0];
 
-        if(file){
-            const formData = new FormData();
-            formData.append("profile-image", file);
-            const response = await apiClient.post(ADD_PROFILE_IMAGE_ROUTE, formData);
+            if(file){
+                const formData = new FormData();
+                formData.append("profile-image", file);
+                const response = await apiClient.post(ADD_PROFILE_IMAGE_ROUTE, formData);
 
-            if(response.status === 200 && response.data.image){
-                setUserInfo({...userInfo, image: response.data.image});
-                toast.success("Profile saved successfully.");
+                if(response.status === 200 && response.data.image){
+                    setUserInfo({...userInfo, image: response.data.image});
+                    toast.success("Profile saved successfully.");
+                }
+
+                const reader = new FileReader();
+                reader.onload = () => {
+                    setImage(reader.result);
+                }
+                reader.readAsDataURL(file);
             }
-
-            const reader = new FileReader();
-            reader.onload = () => {
-                setImage(reader.result);
-            }
-            reader.readAsDataURL(file);
+        } catch (e) {
+            console.log(e);
+            toast.error("Could not save image!");
         }
+
     }
 
-    const handleDeleteImage = async () => {}
+    const handleDeleteImage = async () => {
+        try{
+            const response = await apiClient.delete(DELETE_PROFILE_IMAGE_ROUTE);
+
+            if(response.status === 200){
+                setUserInfo({...userInfo, image: null});
+                toast.success("Profile image deleted successfully.");
+                setImage(null);
+            }
+        } catch (error) {
+            console.log(error);
+            toast.error("Failed to delete profile image.");
+        }
+    }
 
     return (
         <div className={"bg-[#1b1c24] h-[100vh] flex items-center justify-center col gap-10"} >
