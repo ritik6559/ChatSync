@@ -106,3 +106,5 @@ export const getUserInfo = async (req, res, next) => {
         return res.status(500).send("Internal Server Error");
     }
 }
+
+export const updateProfile = async (req, res, next) => {}
