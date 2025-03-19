@@ -3,10 +3,12 @@ import {useAppStore} from "@/store/index.js";
 import {useNavigate} from "react-router-dom";
 import {IoArrowBack} from "react-icons/io5";
 import {Avatar, AvatarImage} from "@/components/ui/avatar.jsx";
-import {colors, getColor} from "@/utils/constants.js";
+import {colors, getColor, UPDATE_PROFILE_ROUTE} from "@/utils/constants.js";
 import {FaPlus, FaTrash} from "react-icons/fa";
 import {Input} from "@/components/ui/input.jsx";
 import {Button} from "@/components/ui/button.jsx";
+import {toast} from "sonner";
+import apiClient from "@/lib/api-client.js";
 
 const Profile = () => {
 
@@ -18,7 +20,37 @@ const Profile = () => {
     const [hovered, setHovered] = useState(false);
     const [selectedColor, setSelectedColor] = useState(0);
 
-    const saveChanges = async () => {}
+    const validateProfile = () => {
+        if(!firstName) {
+            toast.error("Please enter first name!");
+            return false;
+        }
+        if(!lastName) {
+            toast.error("Please enter last name!");
+            return false;
+        }
+        return true;
+    }
+
+    const saveChanges = async () => {
+        if(validateProfile()){
+            try{
+                const response = await apiClient.post(UPDATE_PROFILE_ROUTE, {
+                    firstName,
+                    lastName,
+                    color: selectedColor
+                });
+                if(response.status === 200 && response.data.user ){
+                    setUserInfo({...response.data.user});
+                    toast.success("Profile saved successfully.");
+                    navigate("/chat");
+                }
+
+            } catch(e){
+                console.log(e);
+            }
+        }
+    }
 
     return (
         <div className={"bg-[#1b1c24] h-[100vh] flex items-center justify-center col gap-10"} >

@@ -107,4 +107,36 @@ export const getUserInfo = async (req, res, next) => {
     }
 }
 
-export const updateProfile = async (req, res, next) => {}
+export const updateProfile = async (req, res, next) => {
+    try{
+        const userId = req.userId;
+        const { firstName, lastName, color } = req.body;
+
+        if(!lastName || !firstName){
+            return res.status(400).send("All fields are required");
+        }
+
+        const user = await User.findByIdAndUpdate(userId,{
+            firstName,
+            lastName,
+            color,
+            profileSetup: true
+        }, {new:true, runValidators: true});
+
+        return res.status(200).json({
+            user: {
+                id: user._id,
+                email: user.email,
+                profileSetup: user.profileSetup,
+                firstName: user.firstName,
+                lastName: user.lastName,
+                image: user.image,
+                color: user.color,
+            }
+        });
+
+    } catch (error) {
+        console.error(error);
+        return res.status(500).send("Internal Server Error");
+    }
+}
