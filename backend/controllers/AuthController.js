@@ -1,6 +1,7 @@
 import User from "../models/UserModel.js";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
+import { renameSync, unlinkSync } from "fs";
 
 const maxAge = 3 * 24 * 60 * 60 * 1000;
 
@@ -140,3 +141,31 @@ export const updateProfile = async (req, res, next) => {
         return res.status(500).send("Internal Server Error");
     }
 }
+
+export const updateProfileImage = async (req, res, next) => {
+    try{
+        if(!req.file){
+            return res.status(400).send("File is required");
+        }
+
+        const date = Date.now();
+        let fileName = "uploads/profiles/" + date + req.file.originalname;
+        renameSync(req.file.path, fileName);
+
+        const updatedUser = await User.findByIdAndUpdate(
+            req.userId,
+            { image: fileName },
+            { new: true, runValidators: true }
+        );
+
+         return res.status(200).json({
+             image: updatedUser.image
+         })
+
+    } catch (error) {
+        console.error(error);
+        return res.status(500).send("Internal Server Error");
+    }
+}
+
+export const deleteProfileImage = async (req, res, next) => {}
