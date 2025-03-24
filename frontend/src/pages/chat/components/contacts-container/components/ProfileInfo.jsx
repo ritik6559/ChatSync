@@ -1,14 +1,32 @@
 import React from 'react';
 import {Avatar, AvatarImage} from "@/components/ui/avatar.jsx";
-import {getColor, HOST} from "@/utils/constants.js";
+import {getColor, HOST, LOGOUT_ROUTE} from "@/utils/constants.js";
 import {useAppStore} from "@/store/index.js";
 import {TooltipProvider} from "@/components/ui/tooltip.jsx";
 import {Tooltip, TooltipTrigger, TooltipContent} from "@/components/ui/tooltip.jsx";
-import {FaEdit2} from "react-icons/fa";
+import {FiEdit2} from "react-icons/fi";
+import {useNavigate} from "react-router-dom";
+import {IoLogOut, IoPowerSharp} from "react-icons/io5"
+import {toast} from "sonner";
+import apiClient from "@/lib/api-client.js";
 
 const ProfileInfo = () => {
 
-    const { userInfo } = useAppStore();
+    const { userInfo, setUserInfo } = useAppStore();
+    const navigate = useNavigate();
+
+    const logout = async () => {
+        try{
+            const res = await apiClient.post(LOGOUT_ROUTE, {});
+            if(res.status === 200){
+                setUserInfo(null);
+                navigate("/auth");
+                toast.success("Logout successfully.");
+            }
+        } catch (e) {
+            toast.error("Logout failed");
+        }
+    }
 
     return (
         <div
@@ -38,14 +56,35 @@ const ProfileInfo = () => {
                         : "" }
                 </div>
             </div>
-            <div className="flex gap-3" >
+            <div className="flex gap-5" >
                 <TooltipProvider>
                     <Tooltip>
                         <TooltipTrigger>
-                            <FaEdit2 />
+                            <FiEdit2
+                                className="text-purple-500 text-xl font-medium"
+                                onClick={() => navigate("/profile")}
+                            />
                         </TooltipTrigger>
-                        <TooltipContent>
-                            <p>Add to library</p>
+                        <TooltipContent
+                            className={"bg-[#1c1b1e] border-none text-white"}
+                        >
+                            Edit Profile
+                        </TooltipContent>
+                    </Tooltip>
+                </TooltipProvider>
+
+                <TooltipProvider>
+                    <Tooltip>
+                        <TooltipTrigger>
+                            <IoPowerSharp
+                                className="text-red-500 text-xl font-medium"
+                                onClick={logout}
+                            />
+                        </TooltipTrigger>
+                        <TooltipContent
+                            className={"bg-[#1c1b1e] border-none text-white"}
+                        >
+                            Edit Profile
                         </TooltipContent>
                     </Tooltip>
                 </TooltipProvider>
