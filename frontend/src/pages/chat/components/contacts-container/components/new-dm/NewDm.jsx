@@ -18,9 +18,11 @@ import {toast} from "sonner";
 import apiClient from "@/lib/api-client.js";
 import {ScrollArea} from "@/components/ui/scroll-area.jsx";
 import {Avatar, AvatarImage} from "@/components/ui/avatar.jsx";
+import {useAppStore} from "@/store/index.js";
 
 const NewDm = () => {
 
+    const { setSelectedChatType, setSelectedChatData, setSelectedChatMessages } = useAppStore();
     const [openNewContact, setOpenNewContact] = useState(false);
     const [searchedContacts, setSearchedContacts] = useState([]);
 
@@ -40,6 +42,13 @@ const NewDm = () => {
         } catch (error){
             toast.error(error.message);
         }
+    }
+
+    const selectNewContact = (contact) => {
+        setOpenNewContact(false)
+        setSelectedChatType("contact")
+        setSelectedChatData(contact)
+        setSearchedContacts([])
     }
 
     return (
@@ -87,6 +96,7 @@ const NewDm = () => {
                                    <div
                                        key={contact._id}
                                        className={"flex gap-3 items-center cursor-pointer"}
+                                       onClick={() => selectNewContact(contact)}
                                    >
                                        <div>
                                            <Avatar className={" h-12 w-12 rounded-full overflow-hidden"} >

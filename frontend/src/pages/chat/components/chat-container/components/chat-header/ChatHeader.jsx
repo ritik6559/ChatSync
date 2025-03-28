@@ -1,14 +1,52 @@
 import React from 'react';
 import {RiCloseFill} from "react-icons/ri";
+import {useAppStore} from "@/store/index.js";
+import {Avatar, AvatarImage} from "@/components/ui/avatar.jsx";
+import {getColor, HOST} from "@/utils/constants.js";
 
 const ChatHeader = () => {
+
+    const { selectedChatType, selectedChatData } = useAppStore();
+
     return (
         <div className="h-[10vh] border-b-2 border-[#2f303b] flex items-center justify-between px-20" >
-            <div className="flex gap-3 items-center" >
-                <div className="flex gap-3 items-center justify-center" ></div>
+            <div className="flex gap-3 items-center w-full justify-between  " >
+                <div className="flex gap-3 items-center justify-center" >
+                    <div>
+                        <Avatar className={" h-12 w-12 rounded-full overflow-hidden"} >
+                            {
+                                selectedChatData.image
+                                    ? <AvatarImage src={ `${HOST}/${selectedChatData.image}`} alt={"profile"} className={"object-cover w-full h-full bg-black"} />
+                                    : (
+                                        <div className={`uppercase h-32 w-32 md :w-48 md:h-48 text-lg border-[1px] flex items-center justify-center rounded-full ${getColor(selectedChatData.color)}`} >
+                                            {
+                                                selectedChatData.firstName
+                                                    ? selectedChatData.firstName.split('').shift()
+                                                    : selectedChatData.email?.split("").shift()
+                                            }
+                                        </div>
+                                    )
+                            }
+                        </Avatar>
+                    </div>
+
+                    <div>
+                        {
+                            selectedChatType === "contact" && selectedChatData.firstName ?
+                                selectedChatData.firstName + selectedChatData.lastName
+                                : selectedChatData.email
+                        }
+                    </div>
+
+                </div>
                 <div className="flex items-center justify-center gap-5" >
-                    <button className="text-neutral-500 focus:border-none focus:outline-none hover:text-white focus:text-white duration-500 transition-all" >
-                        <RiCloseFill className="text-3xl" />
+                    <button
+                        className="text-neutral-500 focus:border-none focus:outline-none hover:text-white focus:text-white duration-500 transition-all"
+                        onClick={() => setSelectedChatType(undefined)}
+                    >
+                        <RiCloseFill
+                            className="text-3xl"
+                        />
 
                     </button>
                 </div>
