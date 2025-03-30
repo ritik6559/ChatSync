@@ -27,20 +27,23 @@ export const SocketProvider = ({ children }) => {
               });
 
               const handleReceiveMessage = (message) => {
-                  const { selectedChatData, selectedChatType } = useAppStore.getState();
+                  const { selectedChatData, selectedChatType, addMessage } = useAppStore.getState();
 
                   if(
                       selectedChatType !== undefined &&
                       ( selectedChatData._id === message.sender._id ||
                         selectedChatData._id === message.recipient._id )
                   ) {
-
+                      console.log("message recv:", message)
+                      addMessage(message);
                   }
               }
-          }
 
-          return () => {
-              socket.current?.disconnect();
+              socket.current?.on("receiveMessage", handleReceiveMessage)
+
+              return () => {
+                  socket.current?.disconnect();
+              }
           }
     }, [userInfo]);
 
