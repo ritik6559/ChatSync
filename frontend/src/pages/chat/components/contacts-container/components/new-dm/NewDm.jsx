@@ -104,7 +104,7 @@ const NewDm = () => {
                                                    contact.image
                                                        ? <AvatarImage src={ `${HOST}/${contact.image}`} alt={"profile"} className={"object-cover w-full h-full bg-black"} />
                                                        : (
-                                                           <div className={`uppercase h-32 w-32 md:w-48 md:h-48 text-lg border-[1px] flex items-center justify-center rounded-full ${getColor(contact.color)}`} >
+                                                           <div className={`uppercase h-32 w-32 text-lg border-[1px] flex items-center justify-center rounded-full ${getColor(contact.color)}`} >
                                                                {
                                                                    contact.firstName
                                                                        ? contact.firstName.split('').shift()
