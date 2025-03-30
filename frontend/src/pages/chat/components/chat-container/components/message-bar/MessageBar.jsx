@@ -11,7 +11,7 @@ const MessageBar = () => {
     const [message, setMessage] = useState('');
     const emojiRef = useRef();
     const [emojiPickerOpen, setEmojiPickerOpen] = useState(false);
-    const { selectedChatType, selectedChatData, userInfo } = useAppStore();
+    const { selectedChatType, selectedChatData, userInfo, addMessage } = useAppStore();
     const socket = useSocket();
 
     useEffect(() => {
@@ -32,17 +32,23 @@ const MessageBar = () => {
 
 
     const sendMessage = () => {
+        try {
 
-        if(selectedChatType === "contact") {
-            socket.emit("sendMessage", {
-                sender: userInfo.id,
-                content: message,
-                recipient: selectedChatData._id,
-                messageType: "text",
-                fileUrl: undefined
-            })
+            if (selectedChatType === "contact") {
+                socket.emit("sendMessage", {
+                    sender: userInfo.id,
+                    content: message,
+                    recipient: selectedChatData._id,
+                    messageType: "text",
+                    fileUrl: undefined
+                });
+
+            }
+
+            setMessage('');
+        } catch (error) {
+            console.log(error);
         }
-
     }
 
     return (

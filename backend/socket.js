@@ -26,9 +26,9 @@ const setupSocket = (server) => {
         const senderSocketId = userSocketMap.get(message.sender);
         const recipientSocketId = userSocketMap.get(message.recipient);
 
-        const createMessage = await Message.create(message);
+        const createdMessage = await Message.create(message);
 
-        const messageData = await Message.findById(createMessage._id)
+        const messageData = await Message.findById(createdMessage._id)
             .populate("sender", "id email firstName lastName image color")
             .populate("recipient", "id email firstName lastName image color")
 
@@ -42,6 +42,7 @@ const setupSocket = (server) => {
 
     io.on('connection', (socket) => {
         const userId = socket.handshake.query.userId;
+        console.log("connected to socket")
 
         if(userId){
             userSocketMap.set(userId, socket.id);
@@ -53,8 +54,6 @@ const setupSocket = (server) => {
         socket.on("sendMessage", sendMessage)
 
         socket.on('disconnect', () => disconnect(socket));
-
-
     });
 };
 

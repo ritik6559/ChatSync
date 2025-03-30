@@ -6,7 +6,7 @@ import {getColor, HOST} from "@/utils/constants.js";
 
 const ChatHeader = () => {
 
-    const { selectedChatType, selectedChatData } = useAppStore();
+    const { selectedChatType, selectedChatData, setSelectedChatType } = useAppStore();
 
     return (
         <div className="h-[10vh] border-b-2 border-[#2f303b] flex items-center justify-between px-20" >
@@ -33,11 +33,10 @@ const ChatHeader = () => {
                     <div>
                         {
                             selectedChatType === "contact" && selectedChatData.firstName ?
-                                selectedChatData.firstName + selectedChatData.lastName
+                                selectedChatData.firstName + ' ' + selectedChatData.lastName
                                 : selectedChatData.email
                         }
                     </div>
-
                 </div>
                 <div className="flex items-center justify-center gap-5" >
                     <button
@@ -47,7 +46,6 @@ const ChatHeader = () => {
                         <RiCloseFill
                             className="text-3xl"
                         />
-
                     </button>
                 </div>
             </div>
