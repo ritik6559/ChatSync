@@ -1,4 +1,5 @@
 import User from "../models/UserModel.js";
+import mongoose from "mongoose";
 
 export const searchContacts = async (req, res) => {
     try{
@@ -26,6 +27,31 @@ export const searchContacts = async (req, res) => {
         });
 
         return res.status(200).json({ contacts });
+
+    } catch (error) {
+        console.error(error);
+        return res.status(500).send("Internal Server Error");
+    }
+}
+
+
+export const getContactsForDMList = async (req, res) => {
+    try{
+
+        let userId = req.userId;
+
+        userId = new mongoose.Types.ObjectId(userId);
+
+        const contacts = await Message.aggregate([
+            {
+                $match: {
+                    $or: [
+                        {sender: userId}, {recipient: userId}
+                    ]
+                }
+            }
+        ])
+
 
     } catch (error) {
         console.error(error);
