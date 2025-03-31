@@ -4,6 +4,7 @@ import moment from "moment";
 import apiClient from "@/lib/api-client.js";
 import {GET_ALL_MESSAGES_ROUTE, HOST} from "@/utils/constants.js";
 import {MdFolderZip} from "react-icons/md";
+import {IoMdArrowRoundDown} from "react-icons/io";
 
 const MessageContainer = () => {
     const scrollRef = useRef();
@@ -60,10 +61,23 @@ const MessageContainer = () => {
         });
     };
 
+    const downloadFile = async (filePath) => {
+        const response = await apiClient.get(`${HOST}/${filePath}`,{
+            responseType: "blob",
+        });
+
+        const urlBlob = window.URL.createObjectURL(new Blob([response.data]));
+        const link = document.createElement("a");
+        link.href = urlBlob;
+        link.setAttribute("download", filePath.split("/").pop() );
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        window.URL.revokeObjectURL(urlBlob);
+    }
+
     const renderDMessages = (message) => {
-        if(message.messageType === "file"){
-            console.log(message);
-        }
+
         return (
             <div className={`${message.sender === selectedChatData._id ? "text-left" : "text-right"}`}>
                 {message.messageType === "text" && (
@@ -106,6 +120,12 @@ const MessageContainer = () => {
                                 </span>
                                 <span>
                                     {message.fileUrl.split("/").pop()}
+                                </span>
+                                <span
+                                    className={"bg-black/20 p-3 text-2xl rounded-full hover:bg-black/50 cursor-pointer transition-all duration-300"}
+                                    onClick = {() => downloadFile(message.fileUrl)}
+                                >
+                                    <IoMdArrowRoundDown />
                                 </span>
                             </div>
 
