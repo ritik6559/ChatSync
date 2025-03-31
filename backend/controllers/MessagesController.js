@@ -31,7 +31,7 @@ export const uploadFile = async (req, res) => {
             return res.status(400).send("File is required")
         }
         const date = Date.now();
-        let fileDir = `uploads/file/${date}`;
+        let fileDir = `uploads/files/${date}`;
 
         let fileName = `${fileDir}/${req.file.originalname}`;
 
