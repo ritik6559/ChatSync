@@ -2,7 +2,8 @@ import React, { useEffect, useRef } from "react";
 import { useAppStore } from "@/store/index.js";
 import moment from "moment";
 import apiClient from "@/lib/api-client.js";
-import { GET_ALL_MESSAGES_ROUTE } from "@/utils/constants.js";
+import {GET_ALL_MESSAGES_ROUTE, HOST} from "@/utils/constants.js";
+import {MdFolderZip} from "react-icons/md";
 
 const MessageContainer = () => {
     const scrollRef = useRef();
@@ -13,6 +14,11 @@ const MessageContainer = () => {
             scrollRef.current.scrollIntoView({ behavior: "smooth" });
         }
     }, [selectedChatMessages]);
+
+    const checkImage = (filePath) => {
+        const imageRegex = /\.(jpg|jpeg|png|gif|bmp|tiff|tif|webp|svg|ico|heic|heif)$/i;
+        return imageRegex.test(filePath);
+    }
 
     useEffect(() => {
         const getMessages = async () => {
@@ -55,6 +61,9 @@ const MessageContainer = () => {
     };
 
     const renderDMessages = (message) => {
+        if(message.messageType === "file"){
+            console.log(message);
+        }
         return (
             <div className={`${message.sender === selectedChatData._id ? "text-left" : "text-right"}`}>
                 {message.messageType === "text" && (
@@ -66,6 +75,41 @@ const MessageContainer = () => {
                         } border inline-block p-4 rounded my-1 max-w-[50%] break-words `}
                     >
                         {message.content}
+                    </div>
+                )}
+                {message.messageType === "file" && (
+                    <div
+                        className={`${
+                            message.sender !== selectedChatData._id
+                                ? "bg-[#8417ff]/5 text-[#8417ff]/90 border-[#8417ff]/50"
+                                : "bg-[#2a2b33]/5 text-white/80 border-[#ffffff]/20"
+                        } border inline-block p-4 rounded my-1 max-w-[50%] break-words `}
+                    >
+                        { checkImage(message.fileUrl)
+                            ? <div
+                                className={"cursor-pointer"}
+                            >
+                                <img
+                                    src={`${HOST}/${message.fileUrl}`}
+                                    height={300}
+                                    width={300}
+                                    alt={"file"}
+                                />
+                            </div>
+                            : <div
+                                className={"flex items-center justify-center gap-4"}
+                            >
+                                <span
+                                    className={"text-white/8 text-3xl bg-black/20 rounded-full p-3"}
+                                >
+                                    <MdFolderZip />
+                                </span>
+                                <span>
+                                    {message.fileUrl.split("/").pop()}
+                                </span>
+                            </div>
+
+                        }
                     </div>
                 )}
                 <div className="text-xs text-gray-600">{moment(message.timestamp).format("LT")}</div>

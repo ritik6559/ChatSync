@@ -5,11 +5,14 @@ import {IoSend} from "react-icons/io5";
 import EmojiPicker from "emoji-picker-react";
 import {useAppStore} from "@/store/index.js";
 import {useSocket} from "@/context/SocketContext.jsx";
+import apiClient from "@/lib/api-client.js";
+import {UPLOAD_FILE_ROUTE} from "@/utils/constants.js";
 
 const MessageBar = () => {
 
     const [message, setMessage] = useState('');
     const emojiRef = useRef();
+    const fileInputRef = useRef();
     const [emojiPickerOpen, setEmojiPickerOpen] = useState(false);
     const { selectedChatType, selectedChatData, userInfo, addMessage } = useAppStore();
     const socket = useSocket();
@@ -51,6 +54,37 @@ const MessageBar = () => {
         }
     }
 
+    const handleAttachmentClick = () => {
+        if(fileInputRef.current) {
+            fileInputRef.current.click();
+        }
+    }
+
+    const handleAttachmentChange = async ( event ) => {
+        try{
+            const file = event.target.files[0];
+            if(file){
+                const formData = new FormData();
+                formData.append("file", file);
+                const response = await apiClient.post(UPLOAD_FILE_ROUTE, formData);
+
+                if(response.status === 200 && response.data ) {
+                    socket.emit("sendMessage", {
+                        sender: userInfo.id,
+                        content: undefined,
+                        recipient: selectedChatData._id,
+                        messageType: "file",
+                        fileUrl: response.data.filePath,
+                    })
+                }
+
+            }
+            console.log(file)
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
     return (
         <div className="h-[10vh] bg-[#1c1d25] flex justify-center items-center px-8 mb-6 gap-6" >
             <div className="flex-1 flex bg-[#2a2b33] rounded-md  items-center pr-5 gap-5" >
@@ -61,10 +95,14 @@ const MessageBar = () => {
                     value={message}
                     onChange={(e) => setMessage(e.target.value)}
                 />
-                <button className="text-neutral-500 focus:border-none focus:outline-none hover:text-white focus:text-white duration-500 transition-all" >
+                <button
+                    className="text-neutral-500 focus:border-none focus:outline-none hover:text-white focus:text-white duration-500 transition-all"
+                    onClick={handleAttachmentClick}
+                >
                     <GrAttachment className="text-2xl" />
                 </button>
-                 <div>
+                <input type={"file"} className={"hidden"} onChange={handleAttachmentChange} ref={fileInputRef} />
+                <div>
                      <button
                          className="text-neutral-500 focus:border-none focus:outline-none hover:text-white focus:text-white duration-500 transition-all"
                          onClick={() => setEmojiPickerOpen(true)}
