@@ -9,7 +9,7 @@ import {IoCloseSharp} from "react-icons/io5";
 
 const MessageContainer = () => {
     const scrollRef = useRef();
-    const { selectedChatData, selectedChatType, selectedChatMessages, setSelectedChatMessages } = useAppStore();
+    const { selectedChatData, selectedChatType, selectedChatMessages, setSelectedChatMessages, setIsDownloading, setFileDownloadProgress } = useAppStore();
     const [showImage, setShowImage] = useState(false);
     const [imageURL, setImageURL] = useState(null)
 
@@ -65,8 +65,15 @@ const MessageContainer = () => {
     };
 
     const downloadFile = async (filePath) => {
+
+        setIsDownloading(true);
+        setFileDownloadProgress(0);
+
         const response = await apiClient.get(`${HOST}/${filePath}`,{
             responseType: "blob",
+            onDownloadProgress: (progress) => {
+                setFileDownloadProgress(Math.round((progress.loaded * 100) / progress.total))
+            }
         });
 
         const urlBlob = window.URL.createObjectURL(new Blob([response.data]));
