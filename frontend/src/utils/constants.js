@@ -13,15 +13,13 @@ export const LOGOUT_ROUTE = `${AUTH_ROUTES}/logout`;
 // CONTACT ROUTES
 export const CONTACTS_ROUTES = '/api/contacts'
 export const SEARCH_CONTACTS_ROUTE = `${CONTACTS_ROUTES}/search`;
+export const GET_DM_CONTACTS_ROUTE = `${CONTACTS_ROUTES}/get-contacts-for-dm`;
+export const GET_ALL_CONTACTS = `${CONTACTS_ROUTES}/get-all-contacts`;
 
 // MESSAGES ROUTES
 export const MESSAGES_ROUTES = '/api/messages';
 export const GET_ALL_MESSAGES_ROUTE = `${MESSAGES_ROUTES}/get-messages`;
 export const UPLOAD_FILE_ROUTE = `${MESSAGES_ROUTES}/upload-file`
-
-// CONTACTS ROUTES
-export const CONTACTS_ROUTE = `/api/contacts`;
-export const GET_DM_CONTACTS_ROUTE = `${CONTACTS_ROUTE}/get-contacts-for-dm`;
 
 export const colors = [
     "bg-[#712c4a57] text-[#ff006e] border-[1px] border-[#ff006faa] ",

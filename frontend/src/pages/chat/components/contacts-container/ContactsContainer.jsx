@@ -5,6 +5,7 @@ import apiClient from "@/lib/api-client.js";
 import {GET_DM_CONTACTS_ROUTE} from "@/utils/constants.js";
 import {useAppStore} from "@/store/index.js";
 import ContactList from "@/components/contact-list.jsx";
+import CreateChannel from "@/pages/chat/components/contacts-container/components/create-channel/CreateChannel.jsx";
 
 const ContactsContainer = () => {
 
@@ -41,6 +42,7 @@ const ContactsContainer = () => {
             <div className="my-3" >
                 <div className="flex items-center justify-between pr-10" >
                     <Title text={"CHANNELS"} />
+                    <CreateChannel />
                 </div>
             </div>
             <ProfileInfo />
