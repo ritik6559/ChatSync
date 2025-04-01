@@ -1,34 +1,24 @@
 import React, {useEffect, useState} from 'react';
 import {Tooltip, TooltipContent, TooltipProvider, TooltipTrigger} from "@/components/ui/tooltip.jsx";
-import {FiEdit2} from "react-icons/fi";
 import {FaPlus} from "react-icons/fa";
 import {
     Dialog,
     DialogContent,
     DialogHeader,
-    DialogTrigger,
     DialogTitle,
     DialogDescription
 } from '@/components/ui/dialog.jsx'
 import { Input } from '@/components/ui/input.jsx'
-import {GET_ALL_CONTACTS, getColor, HOST, SEARCH_CONTACTS_ROUTE, SIGNUP_ROUTE} from "@/utils/constants.js";
-import Lottie from "react-lottie";
-import {animationDefaultOptions} from "@/lib/utils.js";
-import {toast} from "sonner";
+import {GET_ALL_CONTACTS} from "@/utils/constants.js";
 import apiClient from "@/lib/api-client.js";
-import {ScrollArea} from "@/components/ui/scroll-area.jsx";
-import {Avatar, AvatarImage} from "@/components/ui/avatar.jsx";
-import {useAppStore} from "@/store/index.js";
 import Multiselect from "@/components/ui/multiselect.jsx";
 
 const CreateChannel = () => {
 
-    const { setSelectedChatType, setSelectedChatData, setSelectedChatMessages } = useAppStore();
     const [newChannelModal, setNewChannelModal] = useState(false);
     const [allContacts, setAllContacts] = useState([]);
     const [selectedContacts, setSelectedContacts] = useState([]);
     const [channelName, setChannelName] = useState("")
-
 
     useEffect(() => {
         const getData = async () => {
