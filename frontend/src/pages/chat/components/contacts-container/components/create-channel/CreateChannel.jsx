@@ -9,16 +9,20 @@ import {
     DialogDescription
 } from '@/components/ui/dialog.jsx'
 import { Input } from '@/components/ui/input.jsx'
-import {GET_ALL_CONTACTS} from "@/utils/constants.js";
+import {CREATE_CHANNEL_ROUTE, GET_ALL_CONTACTS} from "@/utils/constants.js";
 import apiClient from "@/lib/api-client.js";
 import Multiselect from "@/components/ui/multiselect.jsx";
+import {toast} from "sonner";
+import {useAppStore} from "@/store/index.js";
 
 const CreateChannel = () => {
 
     const [newChannelModal, setNewChannelModal] = useState(false);
     const [allContacts, setAllContacts] = useState([]);
     const [selectedContacts, setSelectedContacts] = useState([]);
-    const [channelName, setChannelName] = useState("")
+    const [channelName, setChannelName] = useState("");
+
+    const { addChannel } = useAppStore();
 
     useEffect(() => {
         const getData = async () => {
@@ -30,7 +34,27 @@ const CreateChannel = () => {
     }, []);
 
     const createChannel = async () => {
+        try{
 
+            if( channelName.length > 0 && allContacts.length > 0 ){
+                const response = await apiClient.post(CREATE_CHANNEL_ROUTE, {
+                    name: channelName,
+                    members: selectedContacts.map(c => c.value),
+                });
+
+                if( response.status === 201 ) {
+                    console.log(response.data.channel);
+                    setChannelName("");
+                    setAllContacts([]);
+                    setNewChannelModal(false);
+                    addChannel(response.data.channel);
+                }
+            } else {
+                toast.error("All fields are required");
+            }
+        } catch(error){
+            console.log(error);
+        }
     }
 
     return (
@@ -85,10 +109,10 @@ const CreateChannel = () => {
                     </div>
                     <div
                         className="mt-auto"
+                        onClick={createChannel}
                     >
                         <button
                             className={"w-full bg-purple-700 hover:bg-purple-900 transition-all duration-300 rounded-md p-2"}
-                            onClick={createChannel}
                         >
                             Create Channel
                         </button>

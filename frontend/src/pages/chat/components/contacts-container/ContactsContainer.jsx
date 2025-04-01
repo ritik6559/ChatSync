@@ -2,28 +2,34 @@ import React, {useEffect} from 'react';
 import ProfileInfo from "@/pages/chat/components/contacts-container/components/profile-info/ProfileInfo.jsx";
 import NewDm from "@/pages/chat/components/contacts-container/components/new-dm/NewDm.jsx";
 import apiClient from "@/lib/api-client.js";
-import {GET_DM_CONTACTS_ROUTE} from "@/utils/constants.js";
+import {GET_DM_CONTACTS_ROUTE, GET_USER_CHANNELS_ROUTE} from "@/utils/constants.js";
 import {useAppStore} from "@/store/index.js";
 import ContactList from "@/components/contact-list.jsx";
 import CreateChannel from "@/pages/chat/components/contacts-container/components/create-channel/CreateChannel.jsx";
+import {ScrollArea} from "@/components/ui/scroll-area.jsx";
 
 const ContactsContainer = () => {
-
-    const { directMessagesContacts, setDirectMessagesContacts } = useAppStore();
+    const { directMessagesContacts, setDirectMessagesContacts, channels, setChannels } = useAppStore();
 
     useEffect(() => {
         const getContacts = async () => {
             const response = await apiClient.get(GET_DM_CONTACTS_ROUTE);
-            console.log(response);
             if(response.data.contacts){
                 setDirectMessagesContacts(response.data.contacts);
             }
-
         }
 
-        getContacts();
-    }, []);
+        const getChannels = async () => {
+            const response = await apiClient.get(GET_USER_CHANNELS_ROUTE);
+            if(response.data.channels){
+                console.log(response.data.channels);
+                setChannels(response.data.channels);
+            }
+        }
 
+        getChannels();
+        getContacts();
+    }, [setDirectMessagesContacts, setChannels]);
 
     return (
         <div className="relative md:w-[35vw] lg:w-[30vw] xl:w-[20vw] bg-[#1b1c24] border-r-2 border-[#2f303b] w-full" >
@@ -35,15 +41,20 @@ const ContactsContainer = () => {
                     <Title text={"Direct Messages"} />
                     <NewDm />
                 </div>
-                <div className={" overflow-y-auto scrollbar-hidden"} >
+                <ScrollArea className="max-h-[300px] overflow-y-auto scrollbar-hidden">
                     <ContactList contacts={directMessagesContacts} />
-                </div>
+                </ScrollArea>
             </div>
             <div className="my-3" >
                 <div className="flex items-center justify-between pr-10" >
                     <Title text={"CHANNELS"} />
                     <CreateChannel />
                 </div>
+                <ScrollArea
+                    className="max-h-[500px] overflow-y-auto scrollbar-hidden"
+                >
+                    <ContactList contacts={channels} isChannel={true} />
+                </ScrollArea>
             </div>
             <ProfileInfo />
         </div>
