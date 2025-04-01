@@ -84,6 +84,8 @@ const MessageContainer = () => {
         link.click();
         link.remove();
         window.URL.revokeObjectURL(urlBlob);
+        setIsDownloading(false);
+        setFileDownloadProgress(0);
     }
 
     const renderDMessages = (message) => {
