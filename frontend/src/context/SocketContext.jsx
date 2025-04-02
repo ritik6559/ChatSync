@@ -51,7 +51,7 @@ export const SocketProvider = ({ children }) => {
               socket.current?.on("sendMessage", (message) => handleConversation(message))
 
               socket.current?.on("receive-channel-message", (message) => handleChannelConversation(message))
-              socket.current?.on("send-channel-message", (message) => handleConversation(message))
+              socket.current?.on("send-channel-message", (message) => handleChannelConversation(message))
 
               return () => {
                   socket.current?.disconnect();
