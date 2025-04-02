@@ -26,6 +26,7 @@ export const UPLOAD_FILE_ROUTE = `${MESSAGES_ROUTES}/upload-file`
 export const CHANNEL_ROUTES = "api/channels";
 export const CREATE_CHANNEL_ROUTE = `${CHANNEL_ROUTES}/create-channel`;
 export const GET_USER_CHANNELS_ROUTE = `${CHANNEL_ROUTES}/get-user-channelS`;
+export const GET_CHANNEL_MESSAGES = `${CHANNEL_ROUTES}/get-channel-messages`;
 
 export const colors = [
     "bg-[#712c4a57] text-[#ff006e] border-[1px] border-[#ff006faa] ",
