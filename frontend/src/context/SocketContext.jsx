@@ -13,7 +13,7 @@ export const SocketProvider = ({ children }) => {
     const socket = useRef();
     const { userInfo, setUserInfo } = useAppStore();
 
-    useEffect(() => {
+    useEffect(()  => {
           if( userInfo ) {
               socket.current = io(HOST, {
                   withCredentials: true,
@@ -39,8 +39,19 @@ export const SocketProvider = ({ children }) => {
                   }
               }
 
+              const handleChannelConversation = async (message) => {
+                  const { selectedChatData, selectedChatType, addMessage } = useAppStore.getState();
+                  if( selectedChatType !== undefined && selectedChatData._id === message.channelId ) {
+                      addMessage(message);
+                  }
+
+              }
+
               socket.current?.on("receiveMessage", (message) => handleConversation(message))
               socket.current?.on("sendMessage", (message) => handleConversation(message))
+
+              socket.current?.on("receive-channel-message", (message) => handleChannelConversation(message))
+              socket.current?.on("send-channel-message", (message) => handleConversation(message))
 
               return () => {
                   socket.current?.disconnect();

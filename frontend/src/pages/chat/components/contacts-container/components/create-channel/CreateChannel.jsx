@@ -27,7 +27,6 @@ const CreateChannel = () => {
     useEffect(() => {
         const getData = async () => {
             const response = await apiClient.get(GET_ALL_CONTACTS);
-            console.log(response.data.contacts);
             setAllContacts(response.data.contacts);
         }
         getData();

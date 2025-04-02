@@ -22,7 +22,6 @@ const ContactsContainer = () => {
         const getChannels = async () => {
             const response = await apiClient.get(GET_USER_CHANNELS_ROUTE);
             if(response.data.channels){
-                console.log(response.data.channels);
                 setChannels(response.data.channels);
             }
         }
